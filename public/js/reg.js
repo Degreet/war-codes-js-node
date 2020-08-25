@@ -19,7 +19,7 @@ sendBtn.onclick = () => {
         M.toast({html: data.message})
       } else {
         M.toast({html: 'Вы были зарегистрированы!'})
-        setTimeout(() => location.href = '/auth', 1500)
+        setTimeout(() => location.href = '/', 1500)
       }
     })
   }

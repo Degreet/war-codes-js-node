@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>War Codes</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+  <link rel="stylesheet" href="css/main.css">
+</head>
+<body>
+  <header></header>
+
+  <section id="hello">
+    <div class="container">
+      <h3 class="text-center">Опубликовать</h3>
+      <div class="input-field">
+        <input id="titleInp" type="text" class="validate">
+        <label for="titleInp">Название</label>
+      </div>
+      <div class="input-field">
+        <textarea id="taskDescInp" type="text" class="materialize-textarea validate"></textarea>
+        <label for="taskDescInp">Описание задачи</label>
+      </div>
+
+      <ul id="tests" class="grey lighten-4">
+        <li>
+          <h5>Тест №1</h5>
+          <div class="input-field">
+            <input id="test1CallInp" type="text" class="validate findId">
+            <label for="test1CallInp">Вызов функции</label>
+          </div>
+          <div class="input-field">
+            <input id="test1ResInp" type="text" class="validate">
+            <label for="test1ResInp">Ожидаемый результат</label>
+          </div>
+        </li>
+      </ul>
+
+      <div class="buttons end">
+        <button class="waves-effect waves-light btn" type="button" id="sendBtn">Добавить</button>
+        <button class="waves-effect waves-light btn" type="button" id="addTestBtn">Добавить тест</button>
+      </div>
+    </div>
+  </section>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+  <script src="js/add.js"></script>
+</body>
+</html>

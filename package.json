@@ -11,6 +11,7 @@
   "license": "ISC",
   "dependencies": {
     "bcrypt": "^5.0.0",
+    "c4console": "^1.0.7",
     "cookies": "^0.8.0",
     "dotenv": "^8.2.0",
     "mongodb": "^3.6.0"
