@@ -229,7 +229,7 @@ async function requestHandler(req, resp) {
         const match = path.match(/\.(\w+)$/), ext = match ? match[1] : 'html'
 
         if (path.endsWith("/public/index.html")) {
-          const articlesData = await articles.find().toArray()
+          const articlesData = await articles.find().sort({date: -1}).toArray()
           const [file, header] = await Promise.all([
             fsp.readFile(path), getHeader(cookies)])
           const html = file.toString()
