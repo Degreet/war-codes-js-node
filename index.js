@@ -55,7 +55,7 @@ async function requestHandler(req, resp) {
 
       if (!candidate) {
         data.message = 'Неверный логин'
-        data.succcess = false
+        data.success = false
       } else {
         const res = bcrypt.compareSync(user.pass, candidate.pass)
 
@@ -95,16 +95,36 @@ async function requestHandler(req, resp) {
       }
 
       resp.end()
+    } else if (url == 'remove') {
+      const body = JSON.parse(await streamToString(req))
+      const id = ObjectId(body.id)
+      const article = articles.findOne({_id: id})
+      const token = cookies.get('token')
+      const candidate = users.findOne({token})
+      const author = article.author
+      const data = {}
+
+      if (candidate.login == author) {
+        articles.removeOne({_id: id})
+        data.message = 'Успешно удалено!'
+        data.success = true
+      } else {
+        data.message = 'Ошибка.'
+        data.success = false
+      }
+
+      resp.end(JSON.stringify(data))
     }
   } else if (url.startsWith('/article/')) {
     url = url.slice(9)
-
+    
     const article = await articles.findOne({ _id: ObjectId(url) })
+    const author = article.author
     const [file, header] = await Promise.all([
       fsp.readFile(__dirname + '/public/article.html'), getHeader(cookies)])
     const html = file.toString()
       .replace(/(<\/header>)/, header + '$1')
-      .replace(/(id="article">)/, '$1' + buildFullArticle(article))
+      .replace(/(id="article">)/, '$1' + await buildFullArticle(article, {cookies, author}))
     resp.setHeader('Content-Type', 'text/html')
     resp.end(html)
   } else if (url.startsWith('/go_article/')) {
@@ -143,7 +163,7 @@ async function requestHandler(req, resp) {
             </div>
           </div>
         `)
-          .replace(/(id="article">)/, '$1' + buildFullArticle(article, "go_article"))
+          .replace(/(id="article">)/, '$1' + buildFullArticle(article, {str: "go_article"}))
           .replace(/(id="testsTA">)/, '$1' + getTests(article.tests))
       }
     } else {
@@ -293,7 +313,13 @@ function buildArticle(article) {
   `
 }
 
-function buildFullArticle(article, str) {
+async function buildFullArticle(article, params={}) {
+  const str = params.str
+  const cookies = params.cookies
+  const token = cookies.get('token')
+  const candidate = await users.findOne({token})
+  const author = params.author
+
   return /*html*/`
     <div class="card blue-lighten darken-1">
       <div class="card-content">
@@ -306,10 +332,16 @@ function buildFullArticle(article, str) {
       </div>
       <div class="card-action">
         ${
-    str == 'go_article'
-      ? `<a onclick="send('${article._id}')" href="#">Отправить</a>`
-      : `<a href="/go_article/${article._id}">Перейти к решению</a>`
-    }
+          str == 'go_article'
+            ? `<a onclick="send('${article._id}')" href="#">Отправить</a>`
+            : `<a href="/go_article/${article._id}">Перейти к решению</a>`
+        }
+
+        ${
+          candidate && candidate.login == author
+            ? `<a onclick="remove('${article._id}')" href="#">Удалить</a>`
+            : ''
+        }
       </div>
     </div>
   `
