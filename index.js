@@ -7,6 +7,8 @@ const Cookies = require('cookies')
 const dotenv = require('dotenv')
 dotenv.config()
 
+console.log(process.version)
+
 const PORT = process.env.PORT || 3000
 const pass = process.env.KEY
 const server = createServer(requestHandler)
@@ -134,7 +136,7 @@ async function requestHandler(req, resp) {
     const candidate = await users.findOne({ token })
     const id = ObjectId(url)
 
-    const article = await articles.findOne({ _id: id })
+    const article = await articles.findOne({ articleId: id })
     const [file, header] = await Promise.all([
       fsp.readFile(__dirname + '/public/go_article.html'), getHeader(cookies)])
     let html = file.toString()
