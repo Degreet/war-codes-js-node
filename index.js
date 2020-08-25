@@ -7,8 +7,6 @@ const Cookies = require('cookies')
 const dotenv = require('dotenv')
 dotenv.config()
 
-console.log(process.version)
-
 const PORT = process.env.PORT || 3000
 const pass = process.env.KEY
 const server = createServer(requestHandler)
@@ -130,13 +128,12 @@ async function requestHandler(req, resp) {
     resp.setHeader('Content-Type', 'text/html')
     resp.end(html)
   } else if (url.startsWith('/go_article/')) {
-    url = url.slice(12)
+    const id = url.slice(12)
 
     const token = cookies.get('token')
     const candidate = await users.findOne({ token })
-    const id = ObjectId(url)
 
-    const article = await articles.findOne({ articleId: id })
+    const article = await articles.findOne({ _id: ObjectId(id) })
     const [file, header] = await Promise.all([
       fsp.readFile(__dirname + '/public/go_article.html'), getHeader(cookies)])
     let html = file.toString()
@@ -144,8 +141,8 @@ async function requestHandler(req, resp) {
 
     if (candidate) {
       const completed = candidate.completed || []
-      if (completed.includes(id.toString())) {
-        const answersData = await answers.find({ articleId: id.toString() }).toArray()
+      if (completed.includes(id)) {
+        const answersData = await answers.find({ articleId: id }).toArray()
         html =
           html.replace(/(id="result">)/, '$1' +
             `<div class="container"><ul>${answersData.map(buildAnswer).join('')}</ul></div>`)
@@ -165,7 +162,7 @@ async function requestHandler(req, resp) {
             </div>
           </div>
         `)
-          .replace(/(id="article">)/, '$1' + buildFullArticle(article, {str: "go_article"}))
+          .replace(/(id="article">)/, '$1' + await buildFullArticle(article, {str: "go_article"}))
           .replace(/(id="testsTA">)/, '$1' + getTests(article.tests))
       }
     } else {
@@ -318,7 +315,7 @@ function buildArticle(article) {
 async function buildFullArticle(article, params={}) {
   const str = params.str
   const cookies = params.cookies
-  const token = cookies.get('token')
+  const token = cookies ? cookies.get('token') : ''
   const candidate = await users.findOne({token})
   const author = params.author
 
@@ -335,7 +332,7 @@ async function buildFullArticle(article, params={}) {
       <div class="card-action">
         ${
           str == 'go_article'
-            ? `<a onclick="send('${article._id}')" href="#">Отправить</a>`
+            ? `<a onclick="send('${article._id}')" id="sendBtn" href="#">Отправить</a>`
             : `<a href="/go_article/${article._id}">Перейти к решению</a>`
         }
 
