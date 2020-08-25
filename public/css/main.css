@@ -70,6 +70,10 @@ nav ul a {
     padding-bottom: 10px;
 }
 
+#articles .card-content p {
+    min-height: 110px;
+}
+
 #article .bottom {
     border-top: 1px solid rgba(160,160,160,0.2);
     display: flex;

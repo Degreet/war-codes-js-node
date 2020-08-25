@@ -123,7 +123,7 @@ async function requestHandler(req, resp) {
     if (candidate) {
       const completed = candidate.completed || []
       if (completed.includes(id.toString())) {
-        const answersData = await answers.find({ articleId: id }).toArray()
+        const answersData = await answers.find({ articleId: id.toString() }).toArray()
         html =
           html.replace(/(id="result">)/, '$1' +
             `<div class="container"><ul>${answersData.map(buildAnswer).join('')}</ul></div>`)
