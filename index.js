@@ -361,7 +361,7 @@ function buildAnswer(answer) {
 
 function getTests(tests) {
   let res = ''
-  tests.forEach(test => res += `${test.call} === ${test.res}\n`)
+  tests.forEach(test => res += `isSimilar(${test.call}, ${test.res})\n`)
   return res
 }
 
